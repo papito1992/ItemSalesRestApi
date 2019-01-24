@@ -27,10 +27,44 @@ public class SalesItemController extends ResourceSupport {
         this.repository = repository;
     }
 
+    @RequestMapping("/byTitle/{title}")
+    Resources<Resource<SalesItem>> itemByTitle(@PathVariable(value = "title") String title) {
+        List<Resource<SalesItem>> allItemsWithTitle = repository.findByTitle(title)
+                .stream()
+                .map(assembler::toResource)
+                .collect(Collectors.toList());
+        return new Resources<>(allItemsWithTitle,
+                linkTo(methodOn(SalesItemController.class).itemByTitle(title)).withSelfRel());
+
+    }
+
+    @RequestMapping("/priceRange/{start}/{end}")
+    Resources<Resource<SalesItem>> itemByPriceRange(@PathVariable(value = "start") Integer start, @PathVariable(value = "end") Integer end) {
+        List<Resource<SalesItem>> priceRangeItems = repository.
+                findSalesItemsByPriceBetween(start, end)
+                .stream()
+                .map(assembler::toResource)
+                .collect(Collectors.toList());
+        return new Resources<>(priceRangeItems,
+                linkTo(methodOn(SalesItemController.class).itemByPriceRange(start, end)).withSelfRel());
+    }
+
+    @RequestMapping("/orderItems")
+    Resources<Resource<SalesItem>> sortByTitle() {
+        List<Resource<SalesItem>> priceRangeItems = repository.
+                findAllByOrderByTitle()
+                .stream()
+                .map(assembler::toResource)
+                .collect(Collectors.toList());
+        return new Resources<>(priceRangeItems,
+                linkTo(methodOn(SalesItemController.class).sortByTitle()).withSelfRel());
+    }
+
     @GetMapping("/items")
     Resources<Resource<SalesItem>> allSaleItems() {
         List<Resource<SalesItem>> allItems = repository.findAll().stream()
                 .map(assembler::toResource).collect(Collectors.toList());
+
         return new Resources<>(allItems,
                 linkTo(methodOn(SalesItemController.class).allSaleItems()).withSelfRel());
     }
@@ -119,5 +153,6 @@ public class SalesItemController extends ResourceSupport {
     void deleteItemsComment(@PathVariable Long id) {
         repository.deleteById(id);
     }
+
 
 }
