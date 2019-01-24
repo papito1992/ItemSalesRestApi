@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<SalesItem, Long>, JpaSpecificationExecutor<SalesItem> {
 
+    //CUSTOM QUERIES
     List<SalesItem> findByTitle(String first);
 
     List<SalesItem> findSalesItemsByPriceBetween(Integer start, Integer end);

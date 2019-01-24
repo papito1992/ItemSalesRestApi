@@ -60,7 +60,7 @@ public class SalesItemController extends ResourceSupport {
                 linkTo(methodOn(SalesItemController.class).sortByTitle()).withSelfRel());
     }
 
-    @GetMapping("/items")
+    @GetMapping("/items/allItems")
     Resources<Resource<SalesItem>> allSaleItems() {
         List<Resource<SalesItem>> allItems = repository.findAll().stream()
                 .map(assembler::toResource).collect(Collectors.toList());
@@ -69,19 +69,19 @@ public class SalesItemController extends ResourceSupport {
                 linkTo(methodOn(SalesItemController.class).allSaleItems()).withSelfRel());
     }
 
-    @PostMapping("/items")
+    @PostMapping("/items/addItem")
     ResponseEntity<?> newItem(@RequestBody SalesItem newSalesItem) throws URISyntaxException {
         Resource<SalesItem> resource = assembler.toResource(repository.save(newSalesItem));
         return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
     }
 
-    @GetMapping("/items/{id}")
+    @GetMapping("/items/{id}/getItemById")
     Resource<SalesItem> getSalesItemById(@PathVariable Long id) {
         SalesItem salesItem = repository.findById(id).orElseThrow(() -> new SalesItemNotFoundException(id));
         return assembler.toResource(salesItem);
     }
 
-    @PutMapping("/items/{id}")
+    @PutMapping("/items/{id}/updateItem")
     ResponseEntity<?> updateItem(@RequestBody SalesItem newSalesItem, @PathVariable Long id) throws URISyntaxException {
         SalesItem updatedSalesItem = repository.findById(id)
                 .map(item -> {
@@ -116,7 +116,7 @@ public class SalesItemController extends ResourceSupport {
                 .body(resource);
     }
 
-    @PutMapping("/items/{id}/comment/")
+    @PutMapping("/items/{id}/addComment/")
     ResponseEntity<?> addCommentToItem(@RequestBody SalesItemComment newSalesItem, @PathVariable Long id) throws URISyntaxException {
         SalesItem updatedSalesItem = repository.findById(id)
                 .map(item -> {
@@ -134,7 +134,7 @@ public class SalesItemController extends ResourceSupport {
     /**
      * Specify id and cid to delete comment from the items comment list by index.
      */
-    @PutMapping("/items/{id}/delcomment/{cid}")
+    @PutMapping("/items/{id}/delComment/{cid}")
     ResponseEntity<?> deleteCommentByIndex(@PathVariable Long id, @PathVariable Long cid) throws URISyntaxException {
         SalesItem salesItemComment = repository.findById(id).map(
                 comment -> {
@@ -149,9 +149,11 @@ public class SalesItemController extends ResourceSupport {
                 .body(resource);
     }
 
-    @DeleteMapping("/items/{id}")
-    void deleteItemsComment(@PathVariable Long id) {
+    @DeleteMapping("/items/{id}/delete")
+    ResponseEntity<?> deleteItem(@PathVariable Long id) {
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
+
     }
 
 
