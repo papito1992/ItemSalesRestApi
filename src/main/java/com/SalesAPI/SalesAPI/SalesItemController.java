@@ -60,7 +60,7 @@ public class SalesItemController extends ResourceSupport {
                 linkTo(methodOn(SalesItemController.class).sortByTitle()).withSelfRel());
     }
 
-    @GetMapping("/items/allItems")
+    @GetMapping("/items")
     Resources<Resource<SalesItem>> allSaleItems() {
         List<Resource<SalesItem>> allItems = repository.findAll().stream()
                 .map(assembler::toResource).collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class SalesItemController extends ResourceSupport {
         return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
     }
 
-    @GetMapping("/items/{id}/getItemById")
+    @GetMapping("/items/{id}")
     Resource<SalesItem> getSalesItemById(@PathVariable Long id) {
         SalesItem salesItem = repository.findById(id).orElseThrow(() -> new SalesItemNotFoundException(id));
         return assembler.toResource(salesItem);
@@ -116,7 +116,7 @@ public class SalesItemController extends ResourceSupport {
                 .body(resource);
     }
 
-    @PutMapping("/items/{id}/addComment/")
+    @PutMapping("/items/{id}/addComment")
     ResponseEntity<?> addCommentToItem(@RequestBody SalesItemComment newSalesItem, @PathVariable Long id) throws URISyntaxException {
         SalesItem updatedSalesItem = repository.findById(id)
                 .map(item -> {

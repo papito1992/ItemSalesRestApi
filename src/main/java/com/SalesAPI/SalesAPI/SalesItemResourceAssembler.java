@@ -17,12 +17,12 @@ public class SalesItemResourceAssembler  implements ResourceAssembler<SalesItem,
 
         try {
             return new Resource<>(salesItem,
-                    linkTo(methodOn(SalesItemController.class).getSalesItemById(salesItem.getId())).withSelfRel(),
                     linkTo(methodOn(SalesItemController.class).allSaleItems()).withRel("items"),
-                    linkTo(methodOn(SalesItemController.class).itemByTitle(salesItem.getTitle())).withRel("byTitle"),
+                    linkTo(methodOn(SalesItemController.class).getSalesItemById(salesItem.getId())).withSelfRel(),
+                    linkTo(methodOn(SalesItemController.class).updateItem(salesItem, salesItem.getId())).withRel("items"),
                     linkTo(methodOn(SalesItemController.class).deleteItem(salesItem.getId())).withRel("items"),
-                    linkTo(methodOn(SalesItemController.class).newItem(salesItem)).withRel("items"),
-                    linkTo(methodOn(SalesItemController.class).updateItem(salesItem, salesItem.getId())).withRel("items")
+                    linkTo(methodOn(SalesItemController.class).newItem(salesItem)).withRel("addItem"),
+                    linkTo(methodOn(SalesItemController.class).itemByTitle(salesItem.getTitle())).withSelfRel()
 
                     );
         } catch (URISyntaxException e) {
@@ -31,7 +31,7 @@ public class SalesItemResourceAssembler  implements ResourceAssembler<SalesItem,
     return  new Resource<>(salesItem,
                 linkTo(methodOn(SalesItemController.class).getSalesItemById(salesItem.getId())).withSelfRel(),
                 linkTo(methodOn(SalesItemController.class).allSaleItems()).withRel("items"),
-                linkTo(methodOn(SalesItemController.class).itemByTitle(salesItem.getTitle())).withRel("byTitle"),
+                linkTo(methodOn(SalesItemController.class).itemByTitle(salesItem.getTitle())).withSelfRel(),
                 linkTo(methodOn(SalesItemController.class).deleteItem(salesItem.getId())).withRel("items")
             );
     }
