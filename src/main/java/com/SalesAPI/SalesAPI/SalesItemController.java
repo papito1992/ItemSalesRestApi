@@ -3,6 +3,8 @@ package com.SalesAPI.SalesAPI;
 import com.SalesAPI.SalesAPI.ItemData.ItemRepository;
 import com.SalesAPI.SalesAPI.ItemData.SalesItem;
 import com.SalesAPI.SalesAPI.ItemData.SalesItemComment;
+import com.SalesAPI.SalesAPI.Service.SalesItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
@@ -21,6 +23,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class SalesItemController extends ResourceSupport {
     private final ItemRepository repository;
     private final SalesItemResourceAssembler assembler;
+    @Autowired
+    private SalesItemService salesItemService;
 
     public SalesItemController(ItemRepository repository, SalesItemResourceAssembler assembler) {
         this.assembler = assembler;
@@ -62,11 +66,8 @@ public class SalesItemController extends ResourceSupport {
 
     @GetMapping("/items")
     Resources<Resource<SalesItem>> allSaleItems() {
-        List<Resource<SalesItem>> allItems = repository.findAll().stream()
-                .map(assembler::toResource).collect(Collectors.toList());
-
-        return new Resources<>(allItems,
-                linkTo(methodOn(SalesItemController.class).allSaleItems()).withSelfRel());
+        return new Resources<>(salesItemService.getAllItems(),
+                        linkTo(methodOn(SalesItemController.class).allSaleItems()).withSelfRel());
     }
 
     @PostMapping("/items/addItem")
